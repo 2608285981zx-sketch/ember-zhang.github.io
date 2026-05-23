@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ember Zhang · Growth Operator</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=JetBrains+Mono:wght@400&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    :root {
+      --bg:        #F5F4F0;
+      --white:     #FFFFFF;
+      --blue-bg:   #EBF0F8;
+      --text:      #1C1C1C;
+      --text-2:    #6B6B6B;
+      --text-3:    #A0A0A0;
+      --border:    #E5E2DA;
+      --border-2:  #D8DDE8;
+      --accent:    #5B7FA6;
+      --gold:      #B8964E;
+    }
+    body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; }
+    .pf { font-family: 'Playfair Display', serif; }
+    .mn { font-family: 'JetBrains Mono', monospace; }
+
+    .dot-bg {
+      background-image: radial-gradient(rgba(0,0,0,0.05) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+
+    .flywheel { animation: spin 24s linear infinite; transform-origin: center; }
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+    .lift { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .lift:hover { transform: translateY(-2px); }
+
+    #scroll-bar { position: fixed; top: 0; left: 0; height: 2px; background: var(--accent); z-index: 200; width: 0%; transition: width 0.1s; }
+
+    #search-overlay {
+      display: none; position: fixed; inset: 0; z-index: 300;
+      background: rgba(0,0,0,0.35); backdrop-filter: blur(6px);
+      align-items: flex-start; justify-content: center; padding-top: 18vh;
+    }
+    #search-overlay.open { display: flex; }
+    #search-box { width: min(560px, 90vw); background: white; border: 1px solid var(--border); }
+    #search-input { width: 100%; border: none; outline: none; padding: 14px 18px; font-family: 'DM Sans', sans-serif; font-size: 14px; background: transparent; color: var(--text); }
+    .s-item { display: flex; align-items: center; gap: 10px; padding: 10px 18px; font-size: 13px; color: var(--text-2); cursor: pointer; border-top: 1px solid var(--border); text-decoration: none; }
+    .s-item:hover { background: var(--bg); color: var(--text); }
+    .s-item-icon { color: var(--gold); font-size: 11px; }
+    .search-close { padding: 8px 18px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-3); border-top: 1px solid var(--border); display: block; text-align: right; }
+
+    .copy-btn { cursor: pointer; }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-thumb { background: #D8DDE8; border-radius: 3px; }
+  </style>
+</head>
+<body>
+
+<div id="scroll-bar"></div>
+
+<div id="search-overlay">
+  <div id="search-box">
+    <input id="search-input" placeholder="搜索案例、技能、联系方式…" autocomplete="off" />
+    <a href="#cases" class="s-item" onclick="closeSearch()"><span class="s-item-icon">✦</span>安联人寿 · 客户生命周期增长案例</a>
+    <a href="#cases" class="s-item" onclick="closeSearch()"><span class="s-item-icon">✦</span>Gepp's 零售 · 德国市场 GTM 实验</a>
+    <a href="#cases" class="s-item" onclick="closeSearch()"><span class="s-item-icon">✦</span>内容 0-1 · 全链路转化案例</a>
+    <a href="#growth-thinking" class="s-item" onclick="closeSearch()"><span class="s-item-icon">◎</span>Growth Thinking · 增长方法论</a>
+    <a href="#ai-workflow" class="s-item" onclick="closeSearch()"><span class="s-item-icon">◎</span>AI 工作流 · 工具赋能增长</a>
+    <a href="#about" class="s-item" onclick="closeSearch()"><span class="s-item-icon">◎</span>关于 Ember · 教育与经历</a>
+    <a href="#stack" class="s-item" onclick="closeSearch()"><span class="s-item-icon">◎</span>技能矩阵</a>
+    <a href="#contact" class="s-item" onclick="closeSearch()"><span class="s-item-icon">→</span>联系方式 · 发送邮件</a>
+    <span class="search-close">ESC 关闭</span>
+  </div>
+</div>
+
+<header class="fixed top-0 w-full z-50 bg-[#F5F4F0]/90 backdrop-blur-md border-b border-[#E5E2DA]">
+  <div class="max-w-6xl mx-auto h-14 flex items-center justify-between px-6">
+    <div class="pf text-[15px] font-medium tracking-wide">
+      Ember Zhang<span class="text-[#A0A0A0] ml-2 text-sm italic font-normal">· Growth Operator</span>
+    </div>
+    <nav class="hidden md:flex gap-7 mn text-[10.5px] tracking-[0.16em] text-[#8A8A8A] uppercase">
+      <a href="#cases"        class="hover:text-[#1C1C1C] transition-colors">案例</a>
+      <a href="#growth-thinking" class="hover:text-[#1C1C1C] transition-colors">方法论</a>
+      <a href="#ai-workflow"  class="hover:text-[#1C1C1C] transition-colors">AI 工作流</a>
+      <a href="#about"        class="hover:text-[#1C1C1C] transition-colors">关于</a>
+      <a href="#stack"        class="hover:text-[#1C1C1C] transition-colors">技能</a>
+    </nav>
+    <button onclick="openSearch()" class="border border-[#E5E2DA] bg-white px-3 py-1.5 mn text-[10px] text-[#8A8A8A] hover:border-[#A0A0A0] transition">
+      搜索 <kbd class="ml-1">⌘K</kbd>
+    </button>
+  </div>
+</header>
+
+<!-- ══════════════════════════ 首页 HERO（含均匀分布飞轮） ══════════════════════════ -->
+<section class="pt-36 pb-20 dot-bg">
+  <div class="max-w-6xl mx-auto px-6 grid lg:grid-cols-2 gap-14 items-center">
+
+    <!-- 左：文案 -->
+    <div>
+      <div class="flex items-center gap-3 mb-6 mn text-[10px] tracking-[0.25em] text-[#A0A0A0] uppercase">
+        <div class="w-10 h-px bg-[#B8964E]"></div>
+        Growth OS
+      </div>
+
+      <h1 class="pf text-[clamp(2.2rem,5vw,4rem)] leading-[1.1] font-normal tracking-tight">
+        Hello, I'm <br>
+        Ember Zhang
+      </h1>
+      <div class="pf text-xl md:text-2xl text-[#6B6B6B] mt-3 italic">SaaS / AI / GTM 增长操盘手</div>
+
+      <p class="mt-6 text-[15px] leading-[1.85] text-[#6B6B6B] max-w-xl">
+        构建可复用的增长系统，而非单点营销执行。
+      </p>
+
+      <div class="flex flex-wrap gap-3 mt-8">
+        <span class="border border-[#B8964E] bg-[#FDFBF7] text-[#8B6E2E] px-4 py-1.5 mn text-[11px]">增长系统设计</span>
+        <span class="border border-[#B8964E] bg-[#FDFBF7] text-[#8B6E2E] px-4 py-1.5 mn text-[11px]">用户生命周期（LTV优化）</span>
+        <span class="border border-[#B8964E] bg-[#FDFBF7] text-[#8B6E2E] px-4 py-1.5 mn text-[11px]">GTM策略</span>
+        <span class="border border-[#B8964E] bg-[#FDFBF7] text-[#8B6E2E] px-4 py-1.5 mn text-[11px]">AI增强增长</span>
+      </div>
+
+      <div class="mt-10 flex gap-4 flex-wrap">
+        <a href="#cases" class="bg-[#1C1C1C] text-white px-6 py-3 text-sm hover:bg-[#5B7FA6] transition-colors">查看案例库 →</a>
+        <!-- 作品集链接：指向同目录下的 portfolio.html -->
+        <a href="./portfolio.html" target="_blank" class="border border-[#D8DDE8] bg-white px-6 py-3 text-sm hover:border-[#1C1C1C] transition-colors">下载作品集 ↓</a>
+      </div>
+    </div>
+
+    <!-- 右：增长飞轮（均匀分布，大圆圈加粗） -->
+    <div class="relative justify-center items-center hidden md:flex">
+      <div class="relative w-[380px] h-[380px]">
+        <div class="flywheel absolute inset-0">
+          <svg viewBox="0 0 380 380" class="absolute inset-0 w-full h-full">
+            <circle cx="190" cy="190" r="150" fill="none" stroke="#CFCBC2" stroke-width="2.5" stroke-dasharray="4 6"/>
+          </svg>
+          
+          <!-- 五个标签，每个夹角 72° -->
+          <div class="absolute" style="top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(0deg) translate(0, -150px) translate(-50%, -50%); width: max-content;">
+            <div class="bg-[#5B7FA6] text-white px-4 py-2 text-[13px] mn tracking-wider rounded shadow-md whitespace-nowrap">获客</div>
+          </div>
+          <div class="absolute" style="top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(72deg) translate(0, -150px) translate(-50%, -50%); width: max-content;">
+            <div class="bg-[#5B7FA6] text-white px-4 py-2 text-[13px] mn tracking-wider rounded shadow-md whitespace-nowrap">激活</div>
+          </div>
+          <div class="absolute" style="top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(144deg) translate(0, -150px) translate(-50%, -50%); width: max-content;">
+            <div class="bg-[#5B7FA6] text-white px-4 py-2 text-[13px] mn tracking-wider rounded shadow-md whitespace-nowrap">留存</div>
+          </div>
+          <div class="absolute" style="top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(216deg) translate(0, -150px) translate(-50%, -50%); width: max-content;">
+            <div class="bg-[#5B7FA6] text-white px-4 py-2 text-[13px] mn tracking-wider rounded shadow-md whitespace-nowrap">收入</div>
+          </div>
+          <div class="absolute" style="top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(288deg) translate(0, -150px) translate(-50%, -50%); width: max-content;">
+            <div class="bg-[#B8964E] text-white px-4 py-2 text-[13px] mn tracking-wider rounded shadow-md whitespace-nowrap">推荐</div>
+          </div>
+        </div>
+
+        <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div class="bg-white border border-[#E5E2DA] rounded-full w-32 h-32 flex flex-col items-center justify-center text-center shadow-sm">
+            <span class="mn text-[9px] text-[#B8964E] mb-1 uppercase tracking-widest">数据 + AI</span>
+            <span class="pf text-[#1C1C1C] text-base italic">反馈<br>闭环</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════ 增长成果（数据卡片） ══════════════════════════ -->
+<section id="growth-results" class="py-16 border-b border-[#E5E2DA] bg-white">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="flex items-center gap-4 mb-12">
+      <div class="mn text-[11px] text-[#A0A0A0]">增长成果</div>
+      <div class="flex-1 h-px bg-[#E5E2DA]"></div>
+      <div class="mn text-[11px] tracking-[0.2em] text-[#8A8A8A] uppercase">数据驱动的增长指标</div>
+    </div>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-px bg-[#E5E2DA] border border-[#E5E2DA]">
+      <div class="bg-white py-10 text-center lift">
+        <div class="mn text-[11px] text-[#A0A0A0] uppercase tracking-widest">GMV 增长</div>
+        <div class="pf text-5xl text-[#B8964E] my-3">+300%</div>
+        <div class="mn text-[12px] text-[#8A8A8A]">德国零售增长</div>
+      </div>
+      <div class="bg-white py-10 text-center lift">
+        <div class="mn text-[11px] text-[#A0A0A0] uppercase tracking-widest">留存提升</div>
+        <div class="pf text-5xl text-[#B8964E] my-3">+22%</div>
+        <div class="mn text-[12px] text-[#8A8A8A]">高价值客户留存</div>
+      </div>
+      <div class="bg-white py-10 text-center lift">
+        <div class="mn text-[11px] text-[#A0A0A0] uppercase tracking-widest">复购增长</div>
+        <div class="pf text-5xl text-[#B8964E] my-3">+65%</div>
+        <div class="mn text-[12px] text-[#8A8A8A]">社群复购率</div>
+      </div>
+      <div class="bg-white py-10 text-center lift">
+        <div class="mn text-[11px] text-[#A0A0A0] uppercase tracking-widest">内容互动</div>
+        <div class="pf text-5xl text-[#B8964E] my-3">2.5×</div>
+        <div class="mn text-[12px] text-[#8A8A8A]">内容互动率</div>
+      </div>
+    </div>
+
+    <div class="flex justify-center gap-6 mt-10 text-center mn text-[12px] text-[#6B6B6B]">
+      <div>🇩🇪 德国市场增长经验</div>
+      <div>🤖 AI 辅助增长工作流</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 案例 ══════════════════════════ -->
+<section id="cases" class="py-20 bg-white border-b border-[#E5E2DA]">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="flex items-center gap-4 mb-14">
+      <div class="mn text-[11px] text-[#A0A0A0]">实战案例</div>
+      <div class="flex-1 h-px bg-[#E5E2DA]"></div>
+      <div class="mn text-[11px] tracking-[0.2em] text-[#8A8A8A] uppercase">完整内容见作品集</div>
+    </div>
+
+    <div class="grid lg:grid-cols-3 gap-px bg-[#E5E2DA] border border-[#E5E2DA]">
+      <div class="bg-white p-8 flex flex-col lift group">
+        <div class="pf text-6xl text-[#F5F4F0] select-none">01</div>
+        <h3 class="pf text-xl mt-4">安联人寿 · 客户生命周期增长</h3>
+        <p class="text-sm text-[#8A8A8A] mt-2">德资险企 · 留存增长 · 销售赋能</p>
+        <div class="mt-7 mb-7 h-20 bg-[#F8FAFC] border border-[#E5E2DA] flex items-end p-3 gap-2 justify-center">
+          <div class="w-5 bg-[#C7D4E5] h-6 rounded-t-sm"></div>
+          <div class="w-5 bg-[#A4B9D2] h-11 rounded-t-sm"></div>
+          <div class="w-5 bg-[#5B7FA6] h-16 rounded-t-sm"></div>
+        </div>
+        <div class="mt-auto">
+          <div class="pf text-4xl text-[#1C1C1C]">+22%</div>
+          <div class="mn text-[11px] text-[#8A8A8A] mt-2 mb-6">高价值客户续保率提升</div>
+          <div class="flex flex-wrap gap-2 mb-5">
+            <span class="border border-[#E5E2DA] px-2 py-1 mn text-[10px] text-[#6B6B6B]">留存</span>
+            <span class="border border-[#E5E2DA] px-2 py-1 mn text-[10px] text-[#6B6B6B]">收入</span>
+            <span class="border border-[#E5E2DA] px-2 py-1 mn text-[10px] text-[#6B6B6B]">LTV 分层</span>
+          </div>
+          <a href="#" class="mn text-[11px] text-[#A0A0A0] group-hover:text-[#1C1C1C] transition-colors">查看作品集 →</a>
+        </div>
+      </div>
+
+      <div class="bg-white p-8 flex flex-col lift group">
+        <div class="pf text-6xl text-[#F5F4F0] select-none">02</div>
+        <h3 class="pf text-xl mt-4">Gepp's · 德国市场 GTM 实验</h3>
+        <p class="text-sm text-[#8A8A8A] mt-2">零预算增长实验 · 动线与裂变</p>
+        <div class="mt-7 mb-7 border border-[#E5E2DA] p-5 bg-[#F8FAFC] h-20 flex flex-col justify-center gap-2">
+          <div class="w-full h-2 bg-[#DCE6F3] rounded-full"></div>
+          <div class="w-3/4 h-2 bg-[#B7CAE1] rounded-full"></div>
+          <div class="w-1/2 h-2 bg-[#5B7FA6] rounded-full"></div>
+        </div>
+        <div class="mt-auto">
+          <div class="pf text-4xl text-[#1C1C1C]">+300%</div>
+          <div class="mn text-[11px] text-[#8A8A8A] mt-2 mb-6">活动期间日均 GMV 环比</div>
+          <div class="flex flex-wrap gap-2 mb-5">
+            <span class="border border-[#E5E2DA] px-2 py-1 mn text-[10px] text-[#6B6B6B]">获客</span>
+            <span class="border border-[#E5E2DA] px-2 py-1 mn text-[10px] text-[#6B6B6B]">激活</span>
+            <span class="border border-[#E5E2DA] px-2 py-1 mn text-[10px] text-[#6B6B6B]">转化</span>
+          </div>
+          <a href="#" class="mn text-[11px] text-[#A0A0A0] group-hover:text-[#1C1C1C] transition-colors">查看作品集 →</a>
+        </div>
+      </div>
+
+      <div class="bg-white p-8 flex flex-col lift group">
+        <div class="pf text-6xl text-[#F5F4F0] select-none">03</div>
+        <h3 class="pf text-xl mt-4">内容增长 · 全链路转化</h3>
+        <p class="text-sm text-[#8A8A8A] mt-2">小红书冷启动 · 手作展线下转化</p>
+        <div class="mt-7 mb-7 border border-[#E5E2DA] p-5 bg-[#F8FAFC] flex flex-col items-center justify-center gap-1.5 mn text-[11px] text-[#8A8A8A] h-20">
+          <span class="text-[#1C1C1C]">内容获客</span>
+          <span>↓</span>
+          <span class="text-[#5B7FA6]">社群激活</span>
+          <span>↓</span>
+          <span class="text-[#B8964E]">推荐裂变</span>
+        </div>
+        <div class="mt-auto">
+          <div class="pf text-4xl text-[#1C1C1C]">2.5×</div>
+          <div class="mn text-[11px] text-[#8A8A8A] mt-2 mb-6">互动率 vs 垂类均值</div>
+          <div class="flex flex-wrap gap-2 mb-5">
+            <span class="border border-[#E5E2DA] px-2 py-1 mn text-[10px] text-[#6B6B6B]">内容</span>
+            <span class="border border-[#E5E2DA] px-2 py-1 mn text-[10px] text-[#6B6B6B]">推荐</span>
+            <span class="border border-[#E5E2DA] px-2 py-1 mn text-[10px] text-[#6B6B6B]">漏斗追踪</span>
+          </div>
+          <a href="#" class="mn text-[11px] text-[#A0A0A0] group-hover:text-[#1C1C1C] transition-colors">查看作品集 →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ Growth Thinking 方法论 ══════════════════════════ -->
+<section id="growth-thinking" class="py-20 bg-white border-b border-[#E5E2DA]">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="flex items-center gap-4 mb-14">
+      <div class="mn text-[11px] text-[#A0A0A0]">Growth OS 方法论</div>
+      <div class="flex-1 h-px bg-[#E5E2DA]"></div>
+      <div class="mn text-[11px] tracking-[0.2em] text-[#8A8A8A] uppercase">核心原则与系统框架</div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-16">
+      <div class="bg-[#F8FAFC] p-5 border border-[#E5E2DA] text-center lift">
+        <div class="mn text-[14px] text-[#B8964E] mb-2 font-medium">MVP-first experimentation</div>
+        <div class="text-[13px] text-[#6B6B6B]">快速验证，小步迭代</div>
+      </div>
+      <div class="bg-[#F8FAFC] p-5 border border-[#E5E2DA] text-center lift">
+        <div class="mn text-[14px] text-[#B8964E] mb-2 font-medium">LTV > CAC principle</div>
+        <div class="text-[13px] text-[#6B6B6B]">长期价值优先于获客成本</div>
+      </div>
+      <div class="bg-[#F8FAFC] p-5 border border-[#E5E2DA] text-center lift">
+        <div class="mn text-[14px] text-[#B8964E] mb-2 font-medium">Data-driven decision making</div>
+        <div class="text-[13px] text-[#6B6B6B]">数据驱动每个关键决策</div>
+      </div>
+      <div class="bg-[#F8FAFC] p-5 border border-[#E5E2DA] text-center lift">
+        <div class="mn text-[14px] text-[#B8964E] mb-2 font-medium">System thinking over tactics</div>
+        <div class="text-[13px] text-[#6B6B6B]">以系统思维替代单点战术</div>
+      </div>
+      <div class="bg-[#F8FAFC] p-5 border border-[#E5E2DA] text-center lift">
+        <div class="mn text-[14px] text-[#B8964E] mb-2 font-medium">AI-augmented execution</div>
+        <div class="text-[13px] text-[#6B6B6B]">AI 增强执行效率与增长流程</div>
+      </div>
+    </div>
+
+    <div class="max-w-3xl mx-auto text-center mb-12">
+      <div class="flex flex-wrap justify-center items-center gap-4 md:gap-8 mn text-[14px] text-[#6B6B6B]">
+        <span class="bg-white px-5 py-2 border border-[#E5E2DA] shadow-sm">用户洞察</span>
+        <span class="text-[#B8964E]">→</span>
+        <span class="bg-white px-5 py-2 border border-[#E5E2DA] shadow-sm">内容分发</span>
+        <span class="text-[#B8964E]">→</span>
+        <span class="bg-white px-5 py-2 border border-[#E5E2DA] shadow-sm">实验迭代</span>
+        <span class="text-[#B8964E]">→</span>
+        <span class="bg-white px-5 py-2 border border-[#E5E2DA] shadow-sm">留存增长</span>
+      </div>
+    </div>
+
+    <div class="text-center pf italic text-base text-[#6B6B6B] border-t border-[#E5E2DA] pt-10">
+      “增长的核心，不是流量，而是持续创造用户价值。”
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ AI 工作流（工具更新：GPT / Claude / BOLT） ══════════════════════════ -->
+<section id="ai-workflow" class="py-20 bg-[#F5F4F0] border-b border-[#E5E2DA]">
+  <div class="max-w-6xl mx-auto px-6">
+    <div class="flex items-center gap-4 mb-14">
+      <div class="mn text-[11px] text-[#A0A0A0]">AI 工作流</div>
+      <div class="flex-1 h-px bg-[#E5E2DA]"></div>
+      <div class="mn text-[11px] tracking-[0.2em] text-[#8A8A8A] uppercase">AI-Powered Growth</div>
+    </div>
+
+    <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+      <div>
+        <h3 class="pf text-2xl mb-4 text-[#1C1C1C]">AI 正在重构增长工作流</h3>
+        <p class="text-[15px] text-[#6B6B6B] leading-[1.9] mb-8">从竞品洞察到内容规模化生产，再到数据清洗与自动化复盘，AI 工具提供了前所未有的运营杠杆。</p>
+        <div class="grid grid-cols-1 gap-4 mb-8">
+          <div class="flex gap-4 items-start p-4 bg-white border border-[#E5E2DA]">
+            <div class="mn text-[11px] text-[#B8964E] mt-0.5 tracking-widest w-16 shrink-0">洞察</div>
+            <div><div class="text-[14px] font-medium mb-1">AI 辅助市场调研</div><div class="text-[13px] text-[#6B6B6B]">竞品分析、用户洞察提取、行业报告结构化。</div></div>
+          </div>
+          <div class="flex gap-4 items-start p-4 bg-white border border-[#E5E2DA]">
+            <div class="mn text-[11px] text-[#B8964E] mt-0.5 tracking-widest w-16 shrink-0">内容</div>
+            <div><div class="text-[14px] font-medium mb-1">Prompt 驱动内容规模化</div><div class="text-[13px] text-[#6B6B6B]">白皮书、邮件序列、落地页文案保持品牌一致。</div></div>
+          </div>
+          <div class="flex gap-4 items-start p-4 bg-white border border-[#E5E2DA]">
+            <div class="mn text-[11px] text-[#B8964E] mt-0.5 tracking-widest w-16 shrink-0">工具</div>
+            <div><div class="text-[14px] font-medium mb-1">Vibe Coding · 工具搭建</div><div class="text-[13px] text-[#6B6B6B]">使用 GPT / Claude 辅助编码，BOLT 加速原型开发。</div></div>
+          </div>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <span class="border border-[#B8964E] bg-[#FDFBF7] text-[#8B6E2E] px-3 py-1.5 mn text-[11px]">GPT</span>
+          <span class="border border-[#B8964E] bg-[#FDFBF7] text-[#8B6E2E] px-3 py-1.5 mn text-[11px]">Claude</span>
+          <span class="border border-[#B8964E] bg-[#FDFBF7] text-[#8B6E2E] px-3 py-1.5 mn text-[11px]">BOLT</span>
+          <span class="border border-[#B8964E] bg-[#FDFBF7] text-[#8B6E2E] px-3 py-1.5 mn text-[11px]">Prompt 工程</span>
+          <span class="border border-[#E5E2DA] text-[#6B6B6B] px-3 py-1.5 mn text-[11px]">AI 内容规模化</span>
+        </div>
+      </div>
+
+      <div class="bg-white border border-[#E5E2DA] p-8 shadow-sm">
+        <h4 class="mn text-[11px] tracking-[0.2em] text-[#B8964E] uppercase mb-3 flex items-center gap-2">
+          <span class="w-2 h-2 rounded-full bg-[#B8964E]"></span> AI 增长工作流
+        </h4>
+        <div class="relative pl-4">
+          <div class="absolute left-[27px] top-6 bottom-6 w-px border-l border-dashed border-[#CFCBC2]"></div>
+          <div class="group relative flex gap-5 mb-9"><div class="w-8 h-8 rounded-full bg-white border border-[#B8964E] flex items-center justify-center z-10"><div class="w-2 h-2 rounded-full bg-[#B8964E]"></div></div><div><div class="pf text-[17px]">市场洞察</div><div class="mn text-[12px] bg-[#F5F4F0] px-2 py-1 inline-block mt-2">AI 辅助竞品与用户研究</div></div></div>
+          <div class="group relative flex gap-5 mb-9"><div class="w-8 h-8 rounded-full bg-white border border-[#5B7FA6] flex items-center justify-center z-10"><div class="w-2 h-2 rounded-full bg-[#5B7FA6]"></div></div><div><div class="pf text-[17px]">内容策略</div><div class="mn text-[12px] bg-[#F5F4F0] px-2 py-1 inline-block mt-2">Prompt 驱动内容结构化</div></div></div>
+          <div class="group relative flex gap-5 mb-9"><div class="w-8 h-8 rounded-full bg-white border border-[#5B7FA6] flex items-center justify-center z-10"><div class="w-2 h-2 rounded-full bg-[#5B7FA6]"></div></div><div><div class="pf text-[17px]">实验迭代</div><div class="mn text-[12px] bg-[#F5F4F0] px-2 py-1 inline-block mt-2">A/B 测试与数据驱动</div></div></div>
+          <div class="group relative flex gap-5"><div class="w-8 h-8 rounded-full bg-[#1C1C1C] flex items-center justify-center z-10"><svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg></div><div><div class="pf text-[17px]">自动化闭环<span class="text-[#B8964E] text-sm italic ml-2">✓ 持续运转</span></div><div class="mn text-[12px] bg-[#F5F4F0] px-2 py-1 inline-block mt-2">增长自动化与复盘</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 关于与教育背景 ══════════════════════════ -->
+<section id="about" class="py-20 bg-[#EBF0F8] border-b border-[#D8DDE8]">
+  <div class="max-w-5xl mx-auto px-6">
+    <div class="flex items-center gap-4 mb-14">
+      <div class="mn text-[11px] text-[#A0A0A0]">教育背景</div>
+      <div class="flex-1 h-px bg-[#D8DDE8]"></div>
+      <div class="mn text-[11px] tracking-[0.2em] text-[#8A8A8A] uppercase">跨文化学习经历 × 商业增长基础</div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-8 mb-16">
+      <div class="bg-white p-8 border border-[#D8DDE8] shadow-sm lift">
+        <div class="flex justify-between items-start mb-4">
+          <span class="pf text-4xl text-[#B8964E]">DE</span>
+          <span class="mn text-[11px] text-[#6B6B6B]">2019 – 2023</span>
+        </div>
+        <h3 class="pf text-2xl text-[#1C1C1C] mb-1">拜罗伊特大学</h3>
+        <div class="text-[#6B6B6B] mn text-[12px] mb-4">University of Bayreuth</div>
+        <p class="text-[15px] text-[#1C1C1C] font-medium mb-2">国际经济与管理 · 硕士</p>
+        <p class="text-[14px] text-[#6B6B6B]">International Economics & Management</p>
+        <div class="mt-4 text-[12px] text-[#6B6B6B]">Germany</div>
+      </div>
+
+      <div class="bg-white p-8 border border-[#D8DDE8] shadow-sm lift">
+        <div class="flex justify-between items-start mb-4">
+          <span class="pf text-4xl text-[#B8964E]">CN</span>
+          <span class="mn text-[11px] text-[#6B6B6B]">2012 – 2016</span>
+        </div>
+        <h3 class="pf text-2xl text-[#1C1C1C] mb-1">兰州大学</h3>
+        <div class="text-[#6B6B6B] mn text-[12px] mb-4">Lanzhou University</div>
+        <p class="text-[15px] text-[#1C1C1C] font-medium mb-2">人力资源管理 · 学士</p>
+        <p class="text-[14px] text-[#6B6B6B]">Human Resource Management</p>
+        <div class="mt-4 text-[12px] text-[#6B6B6B]">China</div>
+      </div>
+    </div>
+
+    <div class="border-t border-[#D8DDE8] pt-12 text-center">
+      <div class="max-w-2xl mx-auto">
+        <div class="pf text-xl text-[#1C1C1C] mb-4">关于 Ember</div>
+        <p class="text-[15px] text-[#6B6B6B] leading-[1.9] mb-4">
+          From China → Germany → Growth Systems Builder
+        </p>
+        <p class="text-[15px] text-[#6B6B6B] leading-[1.9]">
+          Building scalable growth systems for SaaS, AI, and global GTM.<br>
+          专注于为 SaaS、AI 产品构建可规模化的增长系统，以及全球市场进入策略。
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 技能矩阵 ══════════════════════════ -->
+<section id="stack" class="py-20 bg-white border-b border-[#E5E2DA]">
+  <div class="max-w-5xl mx-auto px-6">
+    <div class="flex items-center gap-4 mb-14">
+      <div class="mn text-[11px] text-[#A0A0A0]">技能矩阵</div>
+      <div class="flex-1 h-px bg-[#E5E2DA]"></div>
+      <div class="mn text-[11px] tracking-[0.2em] text-[#8A8A8A] uppercase">Stack</div>
+    </div>
+    <div class="flex flex-wrap gap-3">
+      <span class="border border-[#B8964E] bg-[#FDFBF7] text-[#8B6E2E] px-5 py-2.5 lift text-[14px] shadow-sm">🇩🇪 德语区市场策略</span>
+      <span class="border border-[#B8964E] bg-[#FDFBF7] text-[#8B6E2E] px-5 py-2.5 lift text-[14px] shadow-sm">🚀 GTM 策略</span>
+      <span class="border border-[#B8964E] bg-[#FDFBF7] text-[#8B6E2E] px-5 py-2.5 lift text-[14px] shadow-sm">🤖 AI 工作流</span>
+      <span class="border border-[#B8964E] bg-[#FDFBF7] text-[#8B6E2E] px-5 py-2.5 lift text-[14px] shadow-sm">⌨️ Prompt 工程</span>
+      <span class="border border-[#E5E2DA] text-[#6B6B6B] bg-[#F8FAFC] px-5 py-2.5 lift text-[13px]">生命周期营销</span>
+      <span class="border border-[#E5E2DA] text-[#6B6B6B] bg-[#F8FAFC] px-5 py-2.5 lift text-[13px]">A/B 测试设计</span>
+      <span class="border border-[#E5E2DA] text-[#6B6B6B] bg-[#F8FAFC] px-5 py-2.5 lift text-[13px]">社群增长</span>
+      <span class="border border-[#E5E2DA] text-[#6B6B6B] bg-[#F8FAFC] px-5 py-2.5 lift text-[13px]">留存体系搭建</span>
+      <span class="border border-[#E5E2DA] text-[#6B6B6B] bg-[#F8FAFC] px-5 py-2.5 lift text-[13px]">CRM 自动化</span>
+      <span class="border border-[#E5E2DA] text-[#6B6B6B] bg-[#F8FAFC] px-5 py-2.5 lift text-[13px]">内容本土化</span>
+      <span class="border border-[#E5E2DA] text-[#6B6B6B] bg-[#F8FAFC] px-5 py-2.5 lift text-[13px]">销售赋能</span>
+      <span class="border border-[#E5E2DA] text-[#6B6B6B] bg-white px-4 py-2 lift text-[12px]">LTV / CAC 建模</span>
+      <span class="border border-[#E5E2DA] text-[#6B6B6B] bg-white px-4 py-2 lift text-[12px]">同期群分析</span>
+      <span class="border border-[#E5E2DA] text-[#6B6B6B] bg-white px-4 py-2 lift text-[12px]">漏斗分析</span>
+      <span class="border border-[#E5E2DA] text-[#6B6B6B] bg-white px-4 py-2 lift text-[12px]">Mixpanel</span>
+      <span class="border border-[#E5E2DA] text-[#6B6B6B] bg-white px-4 py-2 lift text-[12px]">GA4</span>
+      <span class="border border-[#E5E2DA] text-[#6B6B6B] bg-white px-4 py-2 lift text-[12px]">SEO 策略</span>
+      <span class="border border-[#E5E2DA] text-[#6B6B6B] bg-white px-4 py-2 lift text-[12px]">Excel 建模</span>
+      <span class="border border-[#E5E2DA] text-[#6B6B6B] bg-white px-4 py-2 lift text-[12px]">R 语言基础</span>
+      <span class="border border-[#E5E2DA] text-[#6B6B6B] bg-white px-4 py-2 lift text-[12px]">GDPR 合规</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 联系 ══════════════════════════ -->
+<section id="contact" class="py-28 bg-[#1C1C1C] text-white">
+  <div class="max-w-3xl mx-auto px-6 text-center">
+    <h2 class="pf text-4xl md:text-5xl leading-tight text-white mb-6">准备好实现规模化增长了吗？</h2>
+    <p class="text-[#A0A0A0] mt-6 text-[15px] leading-[1.9]">严谨的单位经济学 · <span class="text-[#B8964E]">AI 工作流</span> · 全球化 GTM 系统</p>
+    <div class="mt-12 flex flex-wrap justify-center gap-4">
+      <button id="email-btn" class="copy-btn bg-[#B8964E] text-white px-8 py-3.5 text-sm hover:bg-[#A3823E] transition shadow-lg">✉ 发送邮件联系</button>
+      <a href="#" class="border border-[#444] px-8 py-3.5 text-white hover:bg-[#333] transition text-sm">查看完整作品集 ↗</a>
+    </div>
+    <div id="email-display" class="mt-12 mn text-sm text-[#6B6B6B] tracking-wider">therealxiaozhang@163.com</div>
+  </div>
+</section>
+
+<footer class="border-t border-[#333] py-7 bg-[#1C1C1C] text-[#6B6B6B]">
+  <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center mn text-[11px] uppercase tracking-widest gap-4">
+    <div>© 2026 Ember Zhang</div>
+    <div class="flex items-center gap-2">基于 <span class="text-[#B8964E]">AI 工具</span> 构建</div>
+  </div>
+</footer>
+
+<script>
+  window.addEventListener('scroll', () => {
+    const d = document.documentElement;
+    const pct = (d.scrollTop / (d.scrollHeight - d.clientHeight)) * 100;
+    document.getElementById('scroll-bar').style.width = pct + '%';
+  });
+
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = a.getAttribute('href');
+      if (target && target !== '#') {
+        e.preventDefault();
+        const el = document.querySelector(target);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
+
+  function openSearch() { document.getElementById('search-overlay').classList.add('open'); setTimeout(() => document.getElementById('search-input').focus(), 50); }
+  function closeSearch() { document.getElementById('search-overlay').classList.remove('open'); }
+  document.getElementById('search-overlay').addEventListener('click', e => { if (e.target === document.getElementById('search-overlay')) closeSearch(); });
+  document.addEventListener('keydown', e => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); openSearch(); }
+    if (e.key === 'Escape') closeSearch();
+  });
+
+  document.getElementById('email-btn').addEventListener('click', function () {
+    navigator.clipboard?.writeText('therealxiaozhang@163.com').then(() => {
+      const orig = this.textContent;
+      this.textContent = '✓ 已复制邮箱';
+      setTimeout(() => this.textContent = orig, 2000);
+    });
+  });
+</script>
+
+</body>
+</html>
