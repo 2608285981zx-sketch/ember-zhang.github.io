@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Growth Portfolio · Ember Zhang</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #f7f6f2;
+  --surface:  #ffffff;
+  --ink:      #141414;
+  --ink-2:    #404040;
+  --ink-3:    #909090;
+  --border:   #e0ddd6;
+  --border-l: #eeede8;
+  --green:    #1b5e3c;
+  --green-bg: #edf5f0;
+  --green-bd: #a5ccb6;
+  --blue:     #1a3868;
+  --blue-bg:  #edf0f9;
+  --blue-bd:  #a0b4d8;
+  --amber:    #6b4000;
+  --amber-bg: #fdf4e3;
+  --amber-bd: #d9b46a;
+  --gold:     #B8964E;
+  --mono: 'JetBrains Mono', monospace;
+  --serif: 'Lora', serif;
+  --sans: 'Inter', sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; -webkit-font-smoothing: antialiased; }
+body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-weight: 300; line-height: 1.8; }
+
+.page { max-width: 780px; margin: 0 auto; padding: 5rem 3rem 7rem; }
+
+/* ── Cover ── */
+.cover {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2rem;
+  align-items: end;
+  border-bottom: 1.5px solid var(--ink);
+  padding-bottom: 2.5rem;
+  margin-bottom: 2rem;
+}
+.cover-eyebrow { font-family: var(--mono); font-size: 10px; letter-spacing: .2em; text-transform: uppercase; color: var(--ink-3); margin-bottom: .6rem; }
+.cover-title { font-family: var(--serif); font-size: 2.75rem; line-height: 1.08; font-weight: 400; }
+.cover-title em { font-style: italic; color: var(--ink-3); }
+.cover-desc { margin-top: .75rem; font-size: 13.5px; color: var(--ink-2); line-height: 1.7; }
+.cover-meta { text-align: right; font-family: var(--mono); font-size: 11px; color: var(--ink-3); line-height: 2.1; }
+.cover-meta a { color: var(--ink-3); text-decoration: none; }
+
+/* ── Hero metrics ── */
+.hero {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: .5px solid var(--border);
+  margin-bottom: 4rem;
+}
+.hero-item { background: var(--surface); padding: 1.1rem 1rem; }
+.hero-num { font-family: var(--serif); font-size: 1.9rem; line-height: 1; color: var(--ink); }
+.hero-label { font-size: 11.5px; color: var(--ink-3); margin-top: .2rem; }
+
+/* ── Section ── */
+.sec { margin-bottom: 4.5rem; }
+.sec-head {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: .85rem;
+  margin-bottom: 1.75rem;
+}
+.sec-n { font-family: var(--mono); font-size: 11px; color: var(--ink-3); }
+.sec-rule { height: .5px; background: var(--border); }
+.sec-label { font-family: var(--mono); font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-3); }
+
+/* ── Banner ── */
+.banner {
+  background: var(--ink);
+  color: #fff;
+  padding: 2rem 2.25rem;
+  margin-bottom: 4.5rem;
+}
+.banner-eye { font-family: var(--mono); font-size: 10px; letter-spacing: .18em; text-transform: uppercase; color: #666; margin-bottom: .65rem; }
+.banner-title { font-family: var(--serif); font-size: 1.5rem; line-height: 1.3; margin-bottom: .85rem; }
+.banner-body { font-size: 13px; color: #bbb; line-height: 1.8; }
+.banner-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 1rem; }
+.chip { font-family: var(--mono); font-size: 10.5px; border: .5px solid #444; padding: 3px 10px; color: #ccc; }
+
+/* ── Growth OS ── */
+.os-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: .5px solid var(--border); margin-bottom: 1.25rem; }
+.os-cell { background: var(--surface); padding: 1.1rem 1.25rem; }
+.os-title { font-size: 13.5px; font-weight: 500; margin-bottom: .3rem; }
+.os-body { font-size: 12.5px; color: var(--ink-2); line-height: 1.65; }
+
+.north {
+  border: .5px solid var(--ink);
+  padding: 1rem 1.35rem;
+  display: grid;
+  grid-template-columns: 1.8rem 1fr;
+  gap: .75rem;
+  align-items: start;
+}
+.north-star { font-family: var(--serif); font-size: 1.4rem; color: var(--ink-3); line-height: 1; }
+.north-body { font-size: 13px; color: var(--ink-2); line-height: 1.65; }
+.north-body strong { color: var(--ink); font-weight: 500; }
+
+/* ── Case ── */
+.case { margin-bottom: 3.5rem; }
+.case-header {
+  display: grid;
+  grid-template-columns: 4rem 1fr;
+  gap: 1.25rem;
+  align-items: start;
+  margin-bottom: 1.5rem;
+}
+.case-n { font-family: var(--serif); font-size: 3.5rem; line-height: 1; color: var(--border-l); user-select: none; }
+.case-name { font-family: var(--serif); font-size: 1.3rem; line-height: 1.25; margin-bottom: .25rem; }
+.case-sub { font-size: 12px; color: var(--ink-3); margin-bottom: .5rem; }
+.tags { display: flex; flex-wrap: wrap; gap: 5px; }
+.tag { font-family: var(--mono); font-size: 10px; padding: 2px 8px; border: .5px solid var(--border); color: var(--ink-3); }
+.tag-g { background: var(--green-bg); border-color: var(--green-bd); color: var(--green); }
+
+/* ── Rail ── */
+.rail { border-left: 1.5px solid var(--border); padding-left: 1.75rem; }
+
+.block { margin-bottom: 1.4rem; }
+.blabel { font-family: var(--mono); font-size: 9.5px; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-3); margin-bottom: .45rem; }
+.bbody { font-size: 13px; color: var(--ink-2); line-height: 1.7; }
+
+.hypo {
+  background: #f0efe9;
+  border-left: 2px solid var(--ink-3);
+  padding: .75rem 1rem;
+  font-style: italic;
+  font-size: 12.5px;
+  color: var(--ink-2);
+  line-height: 1.65;
+  margin-bottom: 1.4rem;
+}
+
+/* ── Steps ── */
+.steps { display: flex; flex-direction: column; gap: 11px; margin-bottom: 1.4rem; }
+.step { display: grid; grid-template-columns: 2rem 1fr; gap: .8rem; align-items: start; }
+.step-n {
+  width: 2rem; height: 2rem;
+  border: .5px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 10.5px; color: var(--ink-3);
+  flex-shrink: 0; margin-top: 2px;
+}
+.step-body { font-size: 12.5px; color: var(--ink-2); line-height: 1.7; }
+.step-body strong { color: var(--ink); font-weight: 500; }
+
+/* ── Metrics (增长结果) 样式增强 ── */
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: .5px solid var(--border);
+  margin-bottom: 1rem;
+}
+.metric { background: var(--surface); padding: .85rem 1rem; }
+.metric-n { font-family: var(--serif); font-size: 1.9rem; line-height: 1; font-weight: 500; color: var(--gold); }
+.metric-l { font-size: 11px; color: var(--ink-3); margin-top: .2rem; }
+
+/* 额外增长结果列表样式 */
+.result-list {
+  background: rgba(184, 150, 78, 0.08);
+  padding: 0.8rem 1rem;
+  border-left: 2px solid var(--gold);
+  margin-bottom: 1.4rem;
+  font-size: 13px;
+  color: var(--ink-2);
+  line-height: 1.7;
+}
+.result-list strong {
+  color: var(--gold);
+  font-weight: 500;
+}
+
+/* ── Funnel ── */
+.funnel { display: flex; margin-bottom: 1.4rem; }
+.fn { flex: 1; min-width: 56px; border: .5px solid var(--border); border-right: none; text-align: center; padding: .5rem .4rem; font-size: 10.5px; color: var(--ink-3); }
+.fn:last-child { border-right: .5px solid var(--border); }
+.fn.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+.fn span { display: block; font-family: var(--mono); font-size: 9px; opacity: .6; margin-top: 2px; }
+
+/* ── Transfer ── */
+.transfer { background: var(--blue-bg); border: .5px solid var(--blue-bd); padding: .9rem 1.1rem; margin-bottom: 1.4rem; }
+.t-label { font-family: var(--mono); font-size: 9.5px; letter-spacing: .18em; text-transform: uppercase; color: var(--blue); margin-bottom: .5rem; font-weight: 500; }
+.t-body { font-size: 12.5px; color: #1e3260; line-height: 1.7; }
+.t-body strong { font-weight: 500; }
+
+/* ── Retro ── */
+.retro { background: var(--amber-bg); border: .5px solid var(--amber-bd); padding: .9rem 1.1rem; }
+.r-label { font-family: var(--mono); font-size: 9.5px; letter-spacing: .18em; text-transform: uppercase; color: var(--amber); margin-bottom: .5rem; font-weight: 500; }
+.r-body { font-size: 12.5px; color: #4a2e00; line-height: 1.7; }
+
+/* ── Skills ── */
+.skill-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: .5px solid var(--border); }
+.skill-cell { background: var(--surface); padding: 1rem 1.2rem; }
+.skill-title { font-size: 13px; font-weight: 500; margin-bottom: .3rem; }
+.skill-body { font-size: 12px; color: var(--ink-2); line-height: 1.75; }
+
+/* ── Why Me: 工作方式（你如何运作）── */
+.how-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: .5px solid var(--border); margin-bottom: 2rem; }
+.how-cell { background: var(--surface); padding: 1.1rem 1.25rem; }
+.how-badge {
+  display: inline-block;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: .1em;
+  color: var(--ink-3);
+  border: .5px solid var(--border);
+  padding: 1px 7px;
+  margin-bottom: .55rem;
+}
+.how-title { font-size: 13.5px; font-weight: 500; margin-bottom: .3rem; }
+.how-body { font-size: 12.5px; color: var(--ink-2); line-height: 1.65; }
+.how-proof { font-family: var(--mono); font-size: 11px; color: var(--ink-3); margin-top: .4rem; border-top: .5px solid var(--border-l); padding-top: .4rem; }
+
+/* ── Closing ── */
+.closing { border-top: 1.5px solid var(--ink); padding-top: 1.75rem; margin-top: 2rem; }
+.closing-text { font-family: var(--serif); font-style: italic; font-size: 1.15rem; color: var(--ink-2); line-height: 1.6; max-width: 560px; }
+.closing-note { margin-top: 1rem; font-size: 12px; color: var(--ink-3); line-height: 1.7; }
+.closing-contact { margin-top: .5rem; font-family: var(--mono); font-size: 11.5px; color: var(--ink-2); }
+.closing-contact a { color: var(--ink-2); text-decoration: none; border-bottom: .5px solid var(--border); }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .page { padding: 3rem 1.5rem 5rem; }
+  .cover { grid-template-columns: 1fr; }
+  .cover-meta { text-align: left; }
+  .cover-title { font-size: 2.1rem; }
+  .hero { grid-template-columns: 1fr 1fr; }
+  .banner-grid, .os-grid, .skill-grid, .how-grid { grid-template-columns: 1fr; }
+  .metrics { grid-template-columns: 1fr 1fr; }
+  .case-header { grid-template-columns: 3rem 1fr; }
+  .case-n { font-size: 2.5rem; }
+}
+@media print {
+  body { background: #fff; }
+  .page { padding: 2rem; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ── Cover ── -->
+<header class="cover">
+  <div>
+    <div class="cover-eyebrow">Growth Portfolio · 增长作品集 · 2026</div>
+    <h1 class="cover-title">用系统推动增长，<br><em>用数据验证判断</em></h1>
+    <p class="cover-desc">Growth Marketing · 用户增长 · GTM · 海外市场运营（德语区）</p>
+  </div>
+  <div class="cover-meta">
+    Ember Zhang<br>
+    <a href="mailto:therealxiaozhang@163.com">therealxiaozhang@163.com</a><br>
+    中文 · English · Deutsch C1
+  </div>
+</header>
+
+<!-- ── Hero metrics ── -->
+<div class="hero">
+  <div class="hero-item">
+    <div class="hero-num">+300%</div>
+    <div class="hero-label">日均 GMV 环比增长</div>
+  </div>
+  <div class="hero-item">
+    <div class="hero-num">+22%</div>
+    <div class="hero-label">高价值客户续保率</div>
+  </div>
+  <div class="hero-item">
+    <div class="hero-num">+65%</div>
+    <div class="hero-label">社群驱动复购率</div>
+  </div>
+  <div class="hero-item">
+    <div class="hero-num">2.5×</div>
+    <div class="hero-label">内容互动率 vs 垂类均值</div>
+  </div>
+</div>
+
+<!-- ── Banner ── -->
+<div class="banner">
+  <div class="banner-eye">核心差异化</div>
+  <div class="banner-title">增长方法论 × 德语区市场资产<br>= 出海增长岗位稀缺组合</div>
+  <div class="banner-body">
+    跨零售、保险、内容三个行业验证的增长方法论，可直接迁移至 SaaS / AI / 出海业务。<br>
+    德语区市场资产，是大多数候选人无法用培训补齐的时间壁垒。<br>
+    每一项都有真实数据、完整实验过程和可复现的操作步骤。
+  </div>
+  <div class="banner-chips">
+    <span class="chip">MVP 优先验证</span>
+    <span class="chip">全漏斗设计</span>
+    <span class="chip">LTV 分层运营</span>
+    <span class="chip">德语 C1 · 商务写作</span>
+    <span class="chip">德国本土工作经验</span>
+    <span class="chip">GDPR 合规意识</span>
+  </div>
+</div>
+
+<!-- ── 01 增长方法论 ── -->
+<section class="sec">
+  <div class="sec-head">
+    <span class="sec-n">01</span>
+    <div class="sec-rule"></div>
+    <span class="sec-label">增长方法论</span>
+  </div>
+
+  <div class="os-grid">
+    <div class="os-cell">
+      <div class="os-title">增长是系统，不是活动</div>
+      <div class="os-body">单次渠道或促销活动不是增长。真正的增长是围绕用户全生命周期——获客 → 激活 → 留存 → 收入 → 推荐——设计的可持续闭环，每个节点都有可量化的指标与迭代机制。</div>
+    </div>
+    <div class="os-cell">
+      <div class="os-title">MVP 优先，完成胜过完美</div>
+      <div class="os-body">先设计最小可行实验验证核心假设，用数据决定是否规模化，而不是等方案"完美"再行动。快速试错的成本，远低于押注错误方向的机会成本。</div>
+    </div>
+    <div class="os-cell">
+      <div class="os-title">留存优先于拉新</div>
+      <div class="os-body">LTV 是增长的核心杠杆。留住老用户的 ROI，在大多数业务场景下远高于获取新用户。降低 5% 的流失率，往往带来超过 25% 的利润增长。</div>
+    </div>
+    <div class="os-cell">
+      <div class="os-title">数据决策，建立实验习惯</div>
+      <div class="os-body">A/B 测试、漏斗分析、Cohort 留存——每个结论都有数据出处，每次复盘都输出下一步可执行动作。不依赖直觉，但也不等待完美数据才行动。</div>
+    </div>
+  </div>
+
+  <div class="north">
+    <div class="north-star">★</div>
+    <div class="north-body">
+      <strong>北极星：</strong>增长的终点不是 GMV 或 DAU，而是<strong>用户真正感受到产品价值的时刻</strong>。获客、激活、留存的所有动作，都是在缩短用户抵达这一时刻的路径——之后的增长才可持续。
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 案例一 · 德国本土市场：零预算获客与转化实验 ══════════════════════════ -->
+<section class="sec">
+  <div class="sec-head">
+    <span class="sec-n">02</span>
+    <div class="sec-rule"></div>
+    <span class="sec-label">案例一 · 德国本土市场：零预算获客与转化实验</span>
+  </div>
+
+  <div class="case">
+    <div class="case-header">
+      <div class="case-n">01</div>
+      <div>
+        <div class="case-name">Gepp's 零售（德国）· 圣诞季增长实验</div>
+        <div class="case-sub">获客 + 激活 + 转化 · 无额外广告预算 · 独立全程操盘</div>
+        <div class="tags">
+          <span class="tag tag-g">日 GMV +300%</span>
+          <span class="tag tag-g">停留时长 +40%</span>
+          <span class="tag">A/B 测试</span>
+          <span class="tag">MVP 验证</span>
+          <span class="tag">德国本土</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="rail">
+      <div class="block">
+        <div class="blabel">背景</div>
+        <div class="bbody">德国本土高端食品零售品牌，圣诞旺季自然客流增长停滞，无额外广告预算。数字化程度低，线上转化不足，本地化营销策略缺失。</div>
+      </div>
+
+      <div class="hypo">假设：“本地化内容 + 社区驱动获客 + 门店自提优化，能够构建可持续的增长飞轮。”</div>
+
+      <div class="blabel">实验</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-n">1</div>
+          <div class="step-body"><strong>动线 A/B 测试（激活层）</strong> —— 通过客流热力数据识别高流失触点，对比测试 3 套陈列方案（入口布局、爆品摆位、节日氛围物料），筛选最优方案后规模化落地。用户停留时长提升 40%。</div>
+        </div>
+        <div class="step">
+          <div class="step-n">2</div>
+          <div class="step-body"><strong>MVP 获客钩子验证（获客层）</strong> —— 先在单一门店小范围测试"圣诞限定促销 + 社交打卡分享有礼"活动，数据验证有效后再推广至全门店，避免无效资源消耗。</div>
+        </div>
+        <div class="step">
+          <div class="step-n">3</div>
+          <div class="step-body"><strong>本土社群预热（德语区渠道）</strong> —— 借助本地 WhatsApp 社群进行活动预热，利用德国用户对私密社群的高信任度，实现低成本口碑传播与线上线下引流闭环。</div>
+        </div>
+      </div>
+
+      <div class="blabel">增长结果</div>
+      <div class="metrics">
+        <div class="metric"><div class="metric-n">+300%</div><div class="metric-l">活动期间日均 GMV 环比</div></div>
+        <div class="metric"><div class="metric-n">-45%</div><div class="metric-l">获客成本降低</div></div>
+        <div class="metric"><div class="metric-n">+35%</div><div class="metric-l">门店客流量提升</div></div>
+      </div>
+      <div class="result-list">
+        ✓ 目标区域品牌认知显著提升
+      </div>
+
+      <div class="funnel">
+        <div class="fn on">获客<span>钩子+社群</span></div>
+        <div class="fn on">激活<span>动线+40%</span></div>
+        <div class="fn on">转化<span>GMV+300%</span></div>
+        <div class="fn">留存<span>—</span></div>
+        <div class="fn">推荐<span>—</span></div>
+      </div>
+
+      <div class="transfer">
+        <div class="t-label">方法论迁移 → 数字产品场景</div>
+        <div class="t-body">
+          动线 A/B 测试 → <strong>官网 / 落地页优化</strong>：识别高跳出节点，测试不同 CTA、定价呈现与页面结构。<br>
+          MVP 先验证再推广 → <strong>新市场 GTM 策略</strong>：先做小规模定价与卖点验证，确保 LTV/CAC 健康。<br>
+          社群预热低成本撬动 → <strong>私域与社区获客</strong>：在付费推广前，先用有机社群验证用户质量。
+        </div>
+      </div>
+
+      <div class="retro">
+        <div class="r-label">复盘 · 若重做一次</div>
+        <div class="r-body">当时缺乏对新客与回头客的区分追踪，无法准确计算真实 CAC。若重做，会在活动前建立数据埋点，将"新客占比"纳入子指标，为后续渠道分配提供依据。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 案例二 · 高价值用户留存与 LTV 增长 ══════════════════════════ -->
+<section class="sec">
+  <div class="sec-head">
+    <span class="sec-n">03</span>
+    <div class="sec-rule"></div>
+    <span class="sec-label">案例二 · 高价值用户留存与 LTV 增长</span>
+  </div>
+
+  <div class="case">
+    <div class="case-header">
+      <div class="case-n">02</div>
+      <div>
+        <div class="case-name">安联人寿（德资险企）· 客户生命周期运营</div>
+        <div class="case-sub">留存 + 收入增长 · LTV 分层运营 · 销售赋能体系</div>
+        <div class="tags">
+          <span class="tag tag-g">续保率 +22%</span>
+          <span class="tag tag-g">首月成单率 +35%</span>
+          <span class="tag">LTV 分层</span>
+          <span class="tag">生命周期管理</span>
+          <span class="tag">销售赋能</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="rail">
+      <div class="block">
+        <div class="blabel">背景</div>
+        <div class="bbody">高净值客户首年购买后大量流失，续保率低于行业基准；所有客户被统一对待，资源错配；新销售人员爬坡周期长，首月产能低。</div>
+      </div>
+
+      <div class="hypo">假设：“分层生命周期触达 + 用户旅程优化 + 早期流失预测，能够显著提升留存。”</div>
+
+      <div class="blabel">实验</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-n">1</div>
+          <div class="step-body"><strong>LTV 分层运营（留存核心）</strong> —— 基于资产规模、购买行为、互动频次建立三档分层体系。高价值客户：专属顾问定期回访 + 定制方案；中价值客户：自动化邮件序列 + 限时优惠；低价值客户：标准化触达 + 自助续保链接。</div>
+        </div>
+        <div class="step">
+          <div class="step-n">2</div>
+          <div class="step-body"><strong>销售赋能内容体系（激活提速）</strong> —— 将客户核心需求场景结构化（财富传承 / 税务规划 / 家庭保障），输出可复用的内容素材库与标准化话术，降低销售备客门槛，缩短从沟通到成单的周期。</div>
+        </div>
+        <div class="step">
+          <div class="step-n">3</div>
+          <div class="step-body"><strong>"三维导师制"新人培养实验（MVP 方式）</strong> —— 小范围试点 → A/B 对比不同培养模式的首月成单率 → 数据验证后全量推广。新人首月成单率提升 35%。</div>
+        </div>
+      </div>
+
+      <div class="blabel">增长结果</div>
+      <div class="metrics">
+        <div class="metric"><div class="metric-n">+22%</div><div class="metric-l">高价值客户续保率</div></div>
+        <div class="metric"><div class="metric-n">+35%</div><div class="metric-l">新人首月成单率</div></div>
+        <div class="metric"><div class="metric-n">+65%</div><div class="metric-l">复购率</div></div>
+      </div>
+      <div class="result-list">
+        ✓ NPS 提升 <strong>18 分</strong><br>
+        ✓ 用户生命周期价值增长 <strong>2.3 倍</strong>
+      </div>
+
+      <div class="funnel">
+        <div class="fn">获客<span>—</span></div>
+        <div class="fn on">激活<span>赋能+35%</span></div>
+        <div class="fn on">留存<span>续保+22%</span></div>
+        <div class="fn on">收入<span>LTV 提升</span></div>
+        <div class="fn">推荐<span>—</span></div>
+      </div>
+
+      <div class="transfer">
+        <div class="t-label">方法论迁移 → 数字产品场景</div>
+        <div class="t-body">
+          LTV 三档分层 → <strong>SaaS 用户分层运营</strong>：免费 / 付费 / 企业客户差异化 Onboarding 路径。<br>
+          销售赋能内容库 → <strong>客户成功团队标准化</strong>：缩短用户到达价值时刻的路径。<br>
+          MVP 培养实验逻辑 → <strong>产品功能灰度发布</strong>：先小范围验证，再全量上线。
+        </div>
+      </div>
+
+      <div class="retro">
+        <div class="r-label">复盘 · 若重做一次</div>
+        <div class="r-body">当时 LTV 分层主要依赖资产规模单一维度，行为数据权重不足。若重做，会引入"互动频次下降预警"机制，在客户进入沉默期之前主动触发留存动作，而不是等到续保节点才介入。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════ 案例三 · 内容冷启动与线上线下全链路转化 ══════════════════════════ -->
+<section class="sec">
+  <div class="sec-head">
+    <span class="sec-n">04</span>
+    <div class="sec-rule"></div>
+    <span class="sec-label">案例三 · 内容冷启动与线上线下全链路转化</span>
+  </div>
+
+  <div class="case">
+    <div class="case-header">
+      <div class="case-n">03</div>
+      <div>
+        <div class="case-name">小红书账号 0-1 + 匠心艺语手作展</div>
+        <div class="case-sub">获客 + 转化 · 有机内容增长 · 线上引流线下成交</div>
+        <div class="tags">
+          <span class="tag tag-g">互动率 2.5× 垂类均值</span>
+          <span class="tag tag-g">线索转化率 20%</span>
+          <span class="tag">内容 A/B 测试</span>
+          <span class="tag">全漏斗追踪</span>
+          <span class="tag">0-1 冷启动</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="rail">
+      <div class="block">
+        <div class="blabel">背景</div>
+        <div class="bbody">完全依赖付费获客，获客成本高昂。缺乏有机增长引擎与社区驱动的推荐系统。需从零验证"内容驱动有机获客 → 线上预热 → 线下转化"的完整增长链路。</div>
+      </div>
+
+      <div class="hypo">假设：“教育型内容 + 社区构建 + 推荐激励，能够形成自我强化的增长循环。”</div>
+
+      <div class="blabel">实验</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-n">1</div>
+          <div class="step-body"><strong>内容 A/B 测试驱动有机增长</strong> —— 持续测试标题、封面、内容结构、发布时间等变量，追踪曝光 → 点击 → 互动各节点转化率，筛选高效内容模型并持续迭代复用。账号平均互动率达垂类均值 2.5 倍，单篇最高 13,000+ 浏览 / 1,200+ 互动。</div>
+        </div>
+        <div class="step">
+          <div class="step-n">2</div>
+          <div class="step-body"><strong>全链路漏斗管理：线上引流 → 线下成交（手作展）</strong> —— 策划小红书内容预热 → 收集咨询线索 → 邀约到场 → 现场促成销售，全程以漏斗模型追踪各节点转化。48 小时内 4,000+ 曝光，100+ 有效线索，线索到场转化率 20%（50+ 人到场）。活动结束后输出完整的 ROI 分析与用户画像报告。</div>
+        </div>
+        <div class="step">
+          <div class="step-n">3</div>
+          <div class="step-body"><strong>社区论坛搭建 & 推荐计划（萌芽期）</strong> —— 基于活动沉淀的用户社群，尝试搭建轻量级社区论坛，并设计老带新推荐激励。为后续有机增长引擎打下基础。</div>
+        </div>
+      </div>
+
+      <div class="blabel">增长结果</div>
+      <div class="metrics">
+        <div class="metric"><div class="metric-n">2.5×</div><div class="metric-l">互动率 vs 垂类均值</div></div>
+        <div class="metric"><div class="metric-n">20%</div><div class="metric-l">线索 → 到场转化率</div></div>
+        <div class="metric"><div class="metric-n">13k+</div><div class="metric-l">单篇内容最高浏览量</div></div>
+      </div>
+
+      <div class="funnel">
+        <div class="fn on">获客<span>内容冷启动</span></div>
+        <div class="fn on">激活<span>4,000+曝光</span></div>
+        <div class="fn on">转化<span>线索→20%到场</span></div>
+        <div class="fn">留存<span>—</span></div>
+        <div class="fn on">推荐<span>社群口碑</span></div>
+      </div>
+
+      <div class="transfer">
+        <div class="t-label">方法论迁移 → 数字产品场景</div>
+        <div class="t-body">
+          内容 A/B 测试框架 → <strong>B2B 内容营销</strong>：用同样的变量测试逻辑优化白皮书、EDM 邮件、LinkedIn 内容。<br>
+          全漏斗追踪 + ROI 复盘 → <strong>活动营销管理</strong>：系统化追踪 Webinar / 行业活动从曝光到商机的转化链路。<br>
+          有机内容先行验证 → <strong>GTM 冷启动策略</strong>：在付费推广前用有机内容测试用户痛点与关键词，降低早期获客成本。
+        </div>
+      </div>
+
+      <div class="retro">
+        <div class="r-label">复盘 · 若重做一次</div>
+        <div class="r-body">手作展线索收集依赖人工登记，信息不完整，损失了部分可用于后续运营的用户数据。若重做，会在预热内容中嵌入在线表单并记录流量来源，从而计算各渠道的线索质量差异，指导下次活动的资源分配。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 05 工具与能力 ── -->
+<section class="sec">
+  <div class="sec-head">
+    <span class="sec-n">05</span>
+    <div class="sec-rule"></div>
+    <span class="sec-label">工具与能力</span>
+  </div>
+
+  <div class="skill-grid">
+    <div class="skill-cell">
+      <div class="skill-title">数据分析与实验</div>
+      <div class="skill-body">Excel 高级建模 · 漏斗分析（AARRR）· Cohort 留存分析 · LTV / CAC 建模 · A/B 测试设计与解读 · ICE 优先级评估 · R 语言基础建模</div>
+    </div>
+    <div class="skill-cell">
+      <div class="skill-title">增长与用户运营</div>
+      <div class="skill-body">SEO 策略与关键词研究 · CRM 与自动化营销 · 用户 LTV 分层（RFM）· 生命周期留存策略 · 社群 0-1 冷启动与精细化运营 · 流失节点识别与修复</div>
+    </div>
+    <div class="skill-cell">
+      <div class="skill-title">GTM 与内容</div>
+      <div class="skill-body">市场进入策略（MVP 验证优先）· 白皮书 / 行业案例撰写 · 销售赋能内容制作 · 多渠道整合营销规划 · 活动营销全链路管理 · ROI 分析与复盘</div>
+    </div>
+    <div class="skill-cell">
+      <div class="skill-title">语言 · 市场资产</div>
+      <div class="skill-body">中文（母语）· 英文（工作语言）· 德文（C1）<br><br>德国留学 5 年 + 本土工作经验，熟悉德语区用户决策逻辑、GDPR 合规要求与商务规则，可独立完成德语市场内容策划、本土化审核与客户直接沟通</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 06 工作方式（你如何运作）── -->
+<section class="sec">
+  <div class="sec-head">
+    <span class="sec-n">06</span>
+    <div class="sec-rule"></div>
+    <span class="sec-label">工作方式 · 你如何运作</span>
+  </div>
+
+  <div class="how-grid">
+    <div class="how-cell">
+      <div class="how-badge">思维方式</div>
+      <div class="how-title">全漏斗视角，不只盯一个节点</div>
+      <div class="how-body">不单独优化获客或留存，而是先定位漏斗中最薄弱的节点，再集中资源突破。三个案例分别覆盖获客、留存、转化不同阶段，每次都从整体效率出发做决策。</div>
+      <div class="how-proof">→ 三案例合计覆盖完整 AARRR 漏斗</div>
+    </div>
+    <div class="how-cell">
+      <div class="how-badge">行动方式</div>
+      <div class="how-title">先做实验，再谈规模化</div>
+      <div class="how-body">任何新策略都先设计最小可行版本，在有限范围内验证核心假设，数据说"是"才加注资源。不等预算充足，不等方案完美——圣诞季活动在零预算下先跑通，才全面推广。</div>
+      <div class="how-proof">→ MVP + A/B 测试是所有案例的共同起点</div>
+    </div>
+    <div class="how-cell">
+      <div class="how-badge">决策习惯</div>
+      <div class="how-title">复盘是下一次实验的起点</div>
+      <div class="how-body">每个项目结束后主动输出 ROI 分析与用户画像报告，并识别"若重做一次"的改进点。复盘不是总结成绩，而是为下一轮实验建立更准确的假设。</div>
+      <div class="how-proof">→ 每个案例均有数据复盘与改进方案</div>
+    </div>
+    <div class="how-cell">
+      <div class="how-badge">工作风格</div>
+      <div class="how-title">跨职能协作，结果导向</div>
+      <div class="how-body">增长工作天然需要跨市场、销售、产品、运营多个职能。习惯用数据对齐目标，用结构化内容降低协作成本，独立完成从策略到执行到复盘的完整闭环。</div>
+      <div class="how-proof">→ 三个案例均为独立操盘，全程负责</div>
+    </div>
+  </div>
+
+  <div class="closing">
+    <div class="closing-text">"增长不是找到一个魔法渠道，而是建立一套可以持续迭代的系统——在正确的市场，用正确的节奏，让产品价值找到真正需要它的人。"</div>
+    <div class="closing-note">本作品集基于真实项目沉淀，所有数据均有脱敏版分析报告支撑，可在面试中进一步提供详细执行细节。</div>
+    <div class="closing-contact">Ember Zhang · <a href="mailto:therealxiaozhang@163.com">therealxiaozhang@163.com</a></div>
+  </div>
+</section>
+
+</div>
+</body>
+</html>
